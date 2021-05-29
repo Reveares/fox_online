@@ -65,7 +65,7 @@ function getPlayer(entity) {
 
 revmp.on("entityCreated", (entity) => {
     if (revmp.isPlayer(entity)) {
-        const name = revmp.getName(entity).name;
+        const name = revmp.getNameable(entity).name;
         revmp.sendChatMessage(entity, `Welcome to the fox den, ${name}!`, [0, 255, 255]);
         revmp.sendChatMessage(revmp.players, `${name} joined.`);
         addPlayer(entity);
@@ -76,7 +76,7 @@ revmp.on("entityDestroy", (entity) => {
     if (revmp.isPlayer(entity)) {
         const player = getPlayer(entity);
         emitter.emit('playerDisconnect', player);
-        const name = revmp.getName(entity).name;
+        const name = revmp.getNameable(entity).name;
         revmp.sendChatMessage(revmp.players, `${name} left.`);
         removePlayer(entity);
     }

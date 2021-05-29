@@ -49,7 +49,11 @@ CREATE TABLE `characters` (
   `max_health` int(11) NOT NULL,
   `pos_x` float NOT NULL,
   `pos_y` float NOT NULL,
-  `pos_z` float NOT NULL
+  `pos_z` float NOT NULL,
+  `rot_x` float NOT NULL,
+  `rot_y` float NOT NULL,
+  `rot_z` float NOT NULL,
+  `rot_w` float NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --

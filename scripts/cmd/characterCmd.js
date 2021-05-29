@@ -12,9 +12,13 @@ function extractName(args) {
     return args[0];
 }
 
-async function savePosition(player) {
+async function savePositionAndRotation(player) {
     try {
-        await character.savePosition(player.character, revmp.getPosition(player.entity));
+        const transform = revmp.getTransform(player.entity);
+        const position = [transform.position[0], transform.position[1], transform.position[2]];
+        const rotation = [transform.rotation[0], transform.rotation[1], transform.rotation[2], transform.rotation[3]];
+        await character.savePosition(player.character, position);
+        await character.saveRotation(player.character, rotation);
     } catch (error) {
         console.log(error);
     }
@@ -22,14 +26,17 @@ async function savePosition(player) {
 
 async function processCharacterSwitch(player, name) {
     if (player.hasCharacter()) {
-        savePosition(player);
+        if (player.character.name == name) {
+            revmp.sendChatMessage(player.entity, `You already selected character ${name}`);
+            return;
+        }
+        savePositionAndRotation(player);
     }
 
-    const char = await character.change(player.account, name);
-    player.character = char;
-    revmp.sendChatMessage(player.entity, `You selected character ${char.name}`);
-    revmp.setName(player.entity, char);
-    revmp.setPosition(player.entity, char.pos);
+    player.character = await character.change(player.account, name);
+    revmp.sendChatMessage(player.entity, `You selected character ${player.character.name}`);
+    revmp.setNameable(player.entity, player.character);
+    revmp.setTransform(player.entity, player.character.transform);
     // TODO: set other values.
 }
 
@@ -45,7 +52,7 @@ fox.emitter.on('accountLogin', (player) => {
             }
         } catch (error) {
             console.log(error);
-            revmp.sendChatMessage(entity, error.message, [255, 50, 50]);
+            revmp.sendChatMessage(player.entity, error.message, [255, 50, 50]);
         }
     })();
 });
@@ -53,7 +60,7 @@ fox.emitter.on('accountLogin', (player) => {
 fox.emitter.on('playerDisconnect', (player) => {
     (async () => {
         if (player.hasCharacter()) {
-            await savePosition(player);
+            await savePositionAndRotation(player);
         }
     })();
 });
@@ -86,7 +93,7 @@ revmp.on("chatCommand", (entity, msg) => {
             }
         } catch (error) {
             console.log(error);
-            revmp.sendChatMessage(entity, error.message, [255, 50, 50]);
+            revmp.sendChatMessage(entity, "There was an error :/", [255, 50, 50]);
         }
     })();
 });

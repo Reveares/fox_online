@@ -1,5 +1,5 @@
 'use strict';
-const database = require('./../core/database.js');
+const database = require('./database.js');
 const crypto = require('crypto');
 
 class Account {

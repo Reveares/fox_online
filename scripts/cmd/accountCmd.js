@@ -56,7 +56,7 @@ revmp.on("chatInput", (entity, msg) => {
     }
 
     // TODO: this should be in another file
-    revmp.sendChatMessage(revmp.players, `${revmp.getName(entity).name}: ${msg}`);
+    revmp.sendChatMessage(revmp.players, `${revmp.getNameable(entity).name}: ${msg}`);
 });
 
 revmp.on("entityCreated", (entity) => {
